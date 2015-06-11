@@ -23,8 +23,14 @@ class RaterAdmin(admin.ModelAdmin):
 
     list_filter = ['occupation']
 
+    
 class GenreAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'total_movies')
+
+
+class OccupationAdmin(admin.ModelAdmin):
+    list_display = ('__str__') #, 'admin_order_field = -name')
+
     
 admin.site.register(Occupation)
 admin.site.register(Gender)
