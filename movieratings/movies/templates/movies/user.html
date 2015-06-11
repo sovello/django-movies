@@ -25,6 +25,7 @@
 	    {% for movie in notwatched %}
 	    <li><a href="{% url 'movie' movie.movie_id %}">{{ movie.title }}</a> : Rating {{movie.movie.rating}}</li>
 	    {% endfor %}
+	  </ol>
 	</td>
       </tr>
     </table>
