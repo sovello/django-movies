@@ -7,7 +7,7 @@ from django.db.models import Count, Avg
 
 
 def index(request):
-    return HttpResponse("Welcome Here")
+    return render(request, 'movies/index.html')
 
 
 def genres(request):
@@ -39,3 +39,4 @@ def user(request, uid):
     excludes = Rater.objects.exclude(number = uid)
     recommend_movies = Movie.objects.filter(ratings__rater = uid, ratings__rating__gt = 3).order_by('title')[:20]
     return render(request, 'movies/user.html', {'user':user, "notwatched":recommend_movies, 'ratings':ratingse})
+
