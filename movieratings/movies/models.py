@@ -79,7 +79,7 @@ class Rater(models.Model):
 class Ratings(models.Model):
     rater = models.ForeignKey(Rater)
     movie = models.ForeignKey(Movie)
-    rating = models.IntegerField()
+    rating = models.IntegerField(choices=[(1,1),(2,2),(3,3),(4,4),(5,5)])
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

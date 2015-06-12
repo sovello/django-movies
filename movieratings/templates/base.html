@@ -45,6 +45,8 @@
 						<li><a href="{% url 'users' %}">Movie Raters</a></li>
 						<li><a href="{% url 'about' %}">About Movies Library</a></li>
 						<li><a href="{% url 'contact' %}">Contact MoLi</a></li>
+						<li><a href="{% url 'user' user.id %}">My Profile</a></li>
+						<li><a href="{% url 'userprofile' user.id %}">Edit Profile</a></li>
 						{% else %}
 						<li><a href="{% url 'movies' %}">All Movies</a></li>
 						<li><a href="{% url 'about' %}">About Movies Library</a></li>

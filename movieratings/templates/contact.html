@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h2>Movies are Awesome</h2>
-<p>Do you want more details?</p>
-<h3>Which movies?</h3>
+<h2>We appreciate your feedback</h2>
 
+<form action="/movies/contact/" method="POST">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<input type="submit" value="Submit" />
+</form>
 {% endblock %}

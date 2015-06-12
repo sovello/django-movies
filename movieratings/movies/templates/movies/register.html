@@ -4,8 +4,11 @@
 		{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 		<form action="{% url 'register' %}" method="post">
 			{% csrf_token %}
-			{{ userform.as_p }}
-			{{ raterform.as_h }}
+			<ul>
+				<div class="form-group">
+			{{ userform.as_ul }}
+			{{ raterform.as_ul }}
+			</ul>
 			<input type="submit" name="submit" value="Register" />
 		</form>
 {% endblock %}

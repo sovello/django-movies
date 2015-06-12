@@ -104,3 +104,9 @@ STATICFILES_DIRS = ( os.path.join(BASE_DIR, "static"), )
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/movies'
 LOGIN_URL = '/login/'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'sovellohpmgani@gmail.com'
+EMAIL_HOST_PASSWORD = ',.;Sovello1984'
+EMAIL_PORT = 587
