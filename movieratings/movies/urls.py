@@ -13,5 +13,5 @@ urlpatterns = [
     url(r'^register', views.register, name='register'),
     url(r'^rate/(?P<movie_id>[0-9]+)/$', views.rate, name='rate'),
     url(r'^login/$', 'django.contrib.auth.views.logout'),
-    url(r'^logout/$', 'django.contrib.auth.views.logout'),
+    url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/movies/movies'}),
 ]
