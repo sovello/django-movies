@@ -6,6 +6,8 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import RaterForm, UserForm
+from django.contrib.auth.decorators import login_required # so we can control access
+from django.conf import settings # so we can access LOGIN_URL
 # Create your views here.
 
 
@@ -18,7 +20,7 @@ def genres(request):
     all_genres = [str(genre) for genre in genres]
     return HttpResponse("<br />".join(all_genres))
 
-
+#@login_required
 def movies(request):
     movies_list = Movie.objects.all().order_by('title')
     movies = paginate(request, movies_list, 25, 'page')        
@@ -38,16 +40,22 @@ def paginate(request, items_list, n_per_page, var):
 
 
 def toprated(request):
+    if not request.user.is_authenticated():
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     top_20 = Movie.objects.annotate(top_rated=Avg('ratings__rating')).order_by('-top_rated')[:20]
     return render(request, 'movies/toprated.html', {"topmovies":top_20})
 
 def movie(request, movie_id):
+    if not request.user.is_authenticated():
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     movie = Movie.objects.get(movie_id=movie_id)
     users_list = movie.ratings_set.all()
     users = paginate(request, users_list, 20, 'page')
     return render(request, "movies/movie.html", {"movie":movie, "users":users})
 
 def users(request):
+    if not request.user.is_authenticated():
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     users_list = Rater.objects.all()
     users = paginate(request, users_list, 25, 'page')
     return render(request, "movies/users.html", {"users":users})

@@ -102,3 +102,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/movies'
+LOGIN_URL = '/login/'
