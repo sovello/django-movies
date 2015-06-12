@@ -1,8 +1,7 @@
-<!DOCTYPE html>
-<html>
-  <head><title>User Demographics</title></head>
-  <body style="background:#001100; color:#fff">
-    <h1>User Demographics</h1>      
+{% extends 'base.html' %}
+{% block content %}
+<h1>User Demographics</h1>
+{% if user %}
     <h3>User: <em>{{ user.number }}</em></h3>
     <p>Age: <em>{{ user.age }}</em></p>
     <p>Total Movies Rated: <em>{{user.rated_movies}}</em></p>
@@ -29,5 +28,5 @@
 	</td>
       </tr>
     </table>
-  </body>
-</html>
+{% endif %}
+{% endblock %}

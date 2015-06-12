@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html>
-	<head><title>Movies App</title></head>
-	<body>
+{% extends 'base.html' %}
+{% block content %}
 		<h1>Movies Listing</h1>
 		<ol>
 			<li><a href="{% url 'movies' %}">All Movies</a></li>
 			<li><a href="{% url 'users' %}">All Raters</a></li>
 			<li><a href="{% url 'toprated' %}">Top 20 Rated Movies</a></li>
 		</ol>
-	</body>
-</html>
+{% endblock %}

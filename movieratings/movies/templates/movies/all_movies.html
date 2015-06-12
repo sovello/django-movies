@@ -1,12 +1,11 @@
-<!DOCTYPE html>
-<html>
-  <head><title>All Movies</title></head>
-  <body style="background:#001100; text-align:center; color:#fff">
+{% extends 'base.html' %}
+{% block content %}
     <h1>Movie Ratings</h1>
-    <ol>
+	{% if movies %}
+	<ol>
       {% for movie in movies %}
       <li><a href="{% url 'movie' movie.movie_id %}">{{ movie.title }}</a> <em>{{ movie.release_date }}</em></li>
       {% endfor %}
     </ol>
-  </body>
-</html>
+	{% endif %}
+{% endblock %}

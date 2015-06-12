@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html>
-  <head><title>All Users</title></head>
-  <body style="background:#001100; text-align:center; color:#fff">
+{% extends 'base.html' %}
+
+{% block content %}
     <h1>Users List</h1>
+    {% if users %}
     <ol>
-      {% for user in users %}
-      <li><a href="{% url 'user' user.id %}">{{ user.number }}</a></li>
-      {% endfor %}
+     {% for user in users %}
+       <li><a href="{% url 'user' user.id %}">{{ user.number }}</a></li>
+     {% endfor %}
     </ol>
-  </body>
-</html>
+    {% endif %}
+{% endblock %}	

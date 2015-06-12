@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Movies Library</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="COllections of movies and Raters and rating information">
+		<meta name="author" content="Sovello">
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+		<style>
+			body {
+			padding-top: 60px;
+			}
+		</style>
+		<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+		{% block extrahead %}
+		{% endblock %}
+		<script type="text/javascript">
+		$(function(){
+		{% block jquery %}
+		{% endblock %}
+			});
+		</script>
+	</head>
+	<body>
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</buton>
+					<a class="collapse navbar-brand" href="movies">Movies Library</a>
+				</div>
+				<div class="collapse navbar-collapse">
+					<ul class="nav navbar-nav">
+						<li><a href="{% url 'toprated'%}">Popular Movies</a></li>
+						<li><a href="{% url 'movies'%}">All Movies</a></li>
+						<li><a href="{% url 'users'%}">Movie Raters</a></li>
+						<li><a href="{% url 'about'%}">About Movies Library</a></li>
+						<li><a href="{% url 'contact'%}">Contact MoLi</a></li>
+					</ul>
+					<div>
+						{{ user }}
+						{% if user.is_anonymous %}
+						<a href="{% url 'django.contrib.auth.views.login' %}">LOGIN</a>
+						{% else %}
+					    <a href="{% url 'django.contrib.auth.views.logout' %}">LOGOUT</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="messages">
+			{% if messages %}
+			{% for message in messages %}
+			<div class="alert alert-{{message.tags}}">
+				<a class="close" data-dismiss="alert">x</a>
+				{{message}}
+			</div>
+			{% endfor %}
+			{% endif %}
+		</div>
+		<div class="container">
+			{% block content %}
+			{% endblock %}
+		</div>
+	</body>
+</html>

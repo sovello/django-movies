@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html>
-  <head><title>One Movie Details</title></head>
-  <body style="background:#001100; text-align:center; color:#fff">
+{% extends 'base.html' %}
+{% block content %}
     <h1>Movie Details</h1>    
-      <h2>{{ movie.title }} </h2><hr />
+	{% if movie %}
+	  <h2>{{ movie.title }} </h2><hr />
       <span><strong>Released: </strong><em>{{ movie.release_date }}</em></span><br />
       <span><strong>Average Rating: </strong><em>{{ movie.average_rating }}</em></span>
       <br />
@@ -13,6 +12,5 @@
 	<li><a href="{% url 'user' user.rater.id %}">User {{user.rater }} - Zip {{user.rater.zip}}</a></li>
 	{% endfor %}
 	<br />
-      <span style="float:left"><a href="{% url 'movies' %}">View All Movies</a></span>
-  </body>
-</html>
+	{% endif %}
+{% endblock %}
