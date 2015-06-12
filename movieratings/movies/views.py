@@ -12,6 +12,8 @@ from django.conf import settings # so we can access LOGIN_URL
 
 
 def index(request):
+    if not request.user.is_authenticated():
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     return render(request, 'movies/index.html')
 
 
