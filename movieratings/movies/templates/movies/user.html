@@ -1,15 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>User Demographics</h1>
+<h4>Rater Demographics</h4>
 {% if user %}
-    <h3>User: <em>{{ user.number }}</em></h3>
+    <h5>Rater ID #: <em>{{ user.number }}</em></h5>
     <p>Age: <em>{{ user.age }}</em></p>
     <p>Total Movies Rated: <em>{{user.rated_movies}}</em></p>
     <hr />
-    <h2>Movies Rated</h2>
     <table>
       <tr>
-	<th>Movies Rated</th><th>Top 20 Movies we recommend for you to watch</th>
+	<th>Movies You Have Rated</th><th>Top 20 Movies we recommend for you to watch and Rate</th>
       </tr>
       <tr>
 	<td valign="top">
@@ -18,11 +17,26 @@
 	    <li><a href="{% url 'movie' rate.movie_id %}">{{ rate.movie }}</a> : {{ rate.rating }}</li>
 	    {% endfor %}			      
 	  </ol>
+		<div class="pagination">
+		<span class="step-links">
+			{% if ratings.has_previous %}
+			<a href="?page={{ ratings.previous_page_number}}">previous</a>
+			{% endif %}
+
+			<span class="current">
+				Page {{ ratings.number }} of {{ratings.paginator.num_pages }}.
+			</span>
+
+			{% if ratings.has_next %}
+			<a href="?page={{ ratings.next_page_number }}">next</a>
+			{% endif %}
+		</span>
+	</div>
 	</td>
 	<td valign="top">
 	  <ol>
 	    {% for movie in notwatched %}
-	    <li><a href="{% url 'movie' movie.movie_id %}">{{ movie.title }}</a> : Rating {{movie.movie.rating}}</li>
+	    <li><a href="{% url 'movie' movie.movie_id %}">{{ movie.title }}</a> : <span><a href="{% url 'rate' movie.movie_id %}">Rate</a></li>
 	    {% endfor %}
 	  </ol>
 	</td>

@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Movie Details</h1>    
 	{% if movie %}
-	  <h2>{{ movie.title }} </h2><hr />
+	  <h2><strong>Movie: </strong><em>{{ movie.title }}</em> </h2><hr />
       <span><strong>Released: </strong><em>{{ movie.release_date }}</em></span><br />
       <span><strong>Average Rating: </strong><em>{{ movie.average_rating }}</em></span>
       <br />
@@ -11,6 +10,20 @@
 	{% for user in users %}
 	<li><a href="{% url 'user' user.rater.id %}">User {{user.rater }} - Zip {{user.rater.zip}}</a></li>
 	{% endfor %}
-	<br />
+	<div class="pagination">
+		<span class="step-links">
+			{% if users.has_previous %}
+			<a href="?page={{ users.previous_page_number}}">previous</a>
+			{% endif %}
+
+			<span class="current">
+				Page {{ users.number }} of {{users.paginator.num_pages }}.
+			</span>
+
+			{% if users.has_next %}
+			<a href="?page={{ users.next_page_number }}">next</a>
+			{% endif %}
+		</span>
+	</div>
 	{% endif %}
 {% endblock %}

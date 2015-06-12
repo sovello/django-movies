@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.db.models import Count, Avg
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import RaterForm, UserForm
 # Create your views here.
 
@@ -20,8 +20,22 @@ def genres(request):
 
 
 def movies(request):
-    movies = Movie.objects.all().order_by('title')
+    movies_list = Movie.objects.all().order_by('title')
+    movies = paginate(request, movies_list, 25, 'page')        
     return render(request, "movies/all_movies.html", {"movies":movies})
+
+
+def paginate(request, items_list, n_per_page, var):
+    paginator = Paginator(items_list, n_per_page) # only show 30 movies
+    page = request.GET.get(var) # page has to be set in the url
+    try:
+        items = paginator.page(page)
+    except PageNotAnInteger: # if page is not an integer, default to first page       
+        items = paginator.page(1)
+    except EmptyPage: # page is out of range
+        items = paginator.page(paginator.num_pages)
+    return items
+
 
 def toprated(request):
     top_20 = Movie.objects.annotate(top_rated=Avg('ratings__rating')).order_by('-top_rated')[:20]
@@ -29,17 +43,20 @@ def toprated(request):
 
 def movie(request, movie_id):
     movie = Movie.objects.get(movie_id=movie_id)
-    users = movie.ratings_set.all()
+    users_list = movie.ratings_set.all()
+    users = paginate(request, users_list, 20, 'page')
     return render(request, "movies/movie.html", {"movie":movie, "users":users})
 
 def users(request):
-    users = Rater.objects.all()
+    users_list = Rater.objects.all()
+    users = paginate(request, users_list, 25, 'page')
     return render(request, "movies/users.html", {"users":users})
 
 def user(request, uid):
     user = Rater.objects.get(number=uid)
-    ratingse = user.ratings_set.all().order_by('movie__title', '-rating')
+    ratings_list = user.ratings_set.all().order_by('movie__title', '-rating')
     excludes = Rater.objects.exclude(number = uid)
+    ratingse = paginate(request, ratings_list, 20, 'page')
     recommend_movies = Movie.objects.filter(ratings__rater = uid, ratings__rating__gt = 3).order_by('title')[:20]
     return render(request, 'movies/user.html', {'user':user, "notwatched":recommend_movies, 'ratings':ratingse})
 
@@ -67,9 +84,6 @@ def register(request):
                                  messages.SUCCESS, "KUDOS {} for making this far!".format(user.username))
             return redirect('index')
     return render(request, 'movies/register.html', {'userform':user_form, 'raterform':rater_form})
-'''
-def login(request):
-    return render(request, 'movies/login.html')
 
-
-'''
+def rate(request, movie_id):
+    return render(request, 'movies/rate_movie.html')

@@ -7,5 +7,20 @@
       <li><a href="{% url 'movie' movie.movie_id %}">{{ movie.title }}</a> <em>{{ movie.release_date }}</em></li>
       {% endfor %}
     </ol>
+	<div class="pagination">
+		<span class="step-links">
+			{% if movies.has_previous %}
+			<a href="?page={{ movies.previous_page_number}}">previous</a>
+			{% endif %}
+
+			<span class="current">
+				Page {{ movies.number }} of {{movies.paginator.num_pages }}.
+			</span>
+
+			{% if movies.has_next %}
+			<a href="?page={{ movies.next_page_number }}">next</a>
+			{% endif %}
+		</span>
+	</div>
 	{% endif %}
 {% endblock %}
