@@ -37,12 +37,18 @@
 					<ul class="nav navbar-nav">
 						<a class="navbar-brand" rel="home" href="movies">
 						<img height="50", width="40" style="max_width:100px; margin-top: -14px;" src="http://orig15.deviantart.net/4984/f/2008/073/8/2/bean____mr_bean_by_yudhiecavalera.jpg" title="Credit:yudhiecavalera.deviantart.com/art/bean-Mr-Bean-79927566" />
-					</a>
-						<li><a href="{% url 'toprated'%}">Popular Movies</a></li>
-						<li><a href="{% url 'movies'%}">All Movies</a></li>
-						<li><a href="{% url 'users'%}">Movie Raters</a></li>
-						<li><a href="{% url 'about'%}">About Movies Library</a></li>
-						<li><a href="{% url 'contact'%}">Contact MoLi</a></li>
+						</a>
+						{% if user.is_authenticated %}
+						<li><a href="{% url 'toprated' %}">Popular Movies</a></li>
+						<li><a href="{% url 'movies' %}">All Movies</a></li>
+						<li><a href="{% url 'users' %}">Movie Raters</a></li>
+						<li><a href="{% url 'about' %}">About Movies Library</a></li>
+						<li><a href="{% url 'contact' %}">Contact MoLi</a></li>
+						{% else %}
+						<li><a href="{% url 'movies' %}">All Movies</a></li>
+						<li><a href="{% url 'about' %}">About Movies Library</a></li>
+						<li><a href="{% url 'contact' %}">Contact MoLi</a></li>
+						{% endif %}
 					</ul>
 					<div>
 						{{ user }}
