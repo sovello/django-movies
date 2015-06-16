@@ -32,7 +32,7 @@ def contact(request):
 
             email = EmailMessage(subject = subjet, body = messagge, from_email=sender, to=recipients)
             email.send()
-            return HttpResponseRedirect('/movies/movies/')
+            return HttpResponseRedirect('/movies')
     else:
         form = ContactForm()
 
@@ -40,9 +40,9 @@ def contact(request):
 
 
 def index(request):
-    if not request.user.is_authenticated():
-        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    return render(request, 'movies/index.html')
+    movies_list = Movie.objects.all().order_by('title')
+    movies = paginate(request, movies_list, 25, 'page')        
+    return render(request, "movies/index.html", {"movies":movies})
 
 
 def genres(request):
@@ -51,10 +51,20 @@ def genres(request):
     return HttpResponse("<br />".join(all_genres))
 
 #@login_required
-def movies(request):
-    movies_list = Movie.objects.all().order_by('title')
-    movies = paginate(request, movies_list, 25, 'page')        
-    return render(request, "movies/all_movies.html", {"movies":movies})
+def home(request):
+
+    if not request.user.is_authenticated():
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    genres = [gn.name for gn in Genre.objects.all()]
+    gnrs = Genre.objects.annotate(num_movies=Count('movie'))
+    moviecounts = [gnrs[i].num_movies for i in range(len(gnrs))]
+    avgrating = Genre.objects.annotate(avgrate=Avg('movie__ratings__rating'))
+    fmale = Genre.objects.filter(movie__ratings__rater__gender__name__exact="Female").annotate(favg=Avg('movie__ratings__rating'))
+    male = Genre.objects.filter(movie__ratings__rater__gender__name__exact="Male").annotate(mavg=Avg('movie__ratings__rating'))
+    fmalerate = [round(fmale[i].favg,2) for i in range(len(fmale))]
+    malerate = [round(male[i].mavg,2) for i in range(len(male))]
+    avg = [round(avgrating[i].avgrate,2) for i in range(len(avgrating))]
+    return render(request, 'movies/home.html', {"genres":genres, "moviecounts":moviecounts, 'avgrating':avg, 'malerating':malerate, "femalerating":fmalerate})
 
 
 def paginate(request, items_list, n_per_page, var):
@@ -93,13 +103,22 @@ def users(request):
 def user(request, uid):
     if not request.user.is_authenticated():
         return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-    user = Rater.objects.get(number=uid)
-    ratings_list = user.ratings_set.all().order_by('movie__title', '-rating')
-    excludes = Rater.objects.exclude(number = uid)
-    ratingse = paginate(request, ratings_list, 20, 'page')
-    recommend_movies = Movie.objects.filter(ratings__rater = uid, ratings__rating__gt = 3).order_by('title')[:20]
-    return render(request, 'movies/user.html', {'user':user, "notwatched":recommend_movies, 'ratings':ratingse})
-
+    elif int(uid) == int(request.user.id) and  request.user.is_authenticated():
+        user = Rater.objects.get(number=uid)
+        ratings_list = user.ratings_set.all().order_by('movie__title', '-rating')
+        paginatelist = paginate(request, ratings_list, 20, 'page')
+        recommend_movies = Movie.objects.exclude(ratings__rater = uid).order_by('title')[:20]
+        return render(request, 'movies/user.html', {'user':user, "notwatched":recommend_movies, 'ratings':paginatelist})
+    
+    elif request.user.is_authenticated() and uid != request.user.id:        
+        user = Rater.objects.get(number=uid)
+        ratings_list = user.ratings_set.all().order_by('movie__title', '-rating')
+        paginatelist = paginate(request, ratings_list, 20, 'page')
+        recommend_movies = Movie.objects.exclude(ratings__rater = uid).order_by('title')[:20]
+        currUserMovies = Movie.objects.filter(ratings__rater = request.user.id)
+        currUserMovies = [movie.movie_id for movie in currUserMovies]
+        return render(request, 'movies/other_user.html', {'user':user, "notwatched":recommend_movies,
+                                                          'ratings':paginatelist, 'currUserMovies':currUserMovies, 'uid':uid, 'ruid':request.user.id})
 
 
 def userprofile(request, uid):
@@ -121,7 +140,7 @@ def rate(request, movie_id):
         return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     movie = Movie.objects.get(pk=movie_id)
     if request.method == 'GET':
-        rating_form = RatingForm()        
+        rating_form = RatingForm()
         return render(request, 'movies/rate_movie.html', {"rateform":rating_form, "movie":movie})
     elif request.method == 'POST':
         rating = RatingForm(request.POST)
@@ -130,8 +149,24 @@ def rate(request, movie_id):
             rating_save.rater = Rater.objects.get(user__username = request.user)
             rating_save.movie = movie
             rating_save.save()
+            messages.add_message(request,
+                                 messages.SUCCESS, "You rated {}!".format(rating_save.rating))
         return redirect('user', rating_save.rater.id)
 
+def editrating(request, rating_id):
+    if not request.user.is_authenticated():
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    thisrating = Ratings.objects.get(id=rating_id)
+    if request.method == 'GET':
+        rating_form = RatingForm(instance=thisrating)
+        return render(request, 'movies/edit_rating.html', {"rateform":rating_form, "ratingobj":thisrating})
+    elif request.method == 'POST':
+        updaterating = RatingForm(request.POST, instance = thisrating)
+        if updaterating.is_valid():
+            updaterating.save()
+            messages.add_message(request,
+                                 messages.SUCCESS, "You Updated the Rating to {}!".format(thisrating.rating))
+        return redirect('user', thisrating.rater.id)
     
 def register(request):
     if request.method == "GET":
@@ -155,5 +190,5 @@ def register(request):
             login(request, user)
             messages.add_message(request,
                                  messages.SUCCESS, "KUDOS {} for making this far!".format(user.username))
-            return redirect('index')
+            return redirect('home')
     return render(request, 'movies/register.html', {'userform':user_form, 'raterform':rater_form})

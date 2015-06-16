@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-{% if movie and rateform %}
-<h2>{{ movie.title }}</h2>
+{% if rateform %}
+<h2>{{ ratingobj.movie }}</h2>
 	<h2>Update the Rating for This Movie</h2>
-	<form method="POST" action="{% url 'rate' movie.movie_id %}">
+	<form method="POST" action="{% url 'editrating' ratingobj.id %}">
 		{% csrf_token %}
 		{{ rateform.as_p }}
-		<input type="submit" value="Rate Movie" />
+		<input type="submit" value="Update Rating" />
 	</form>
 {% endif %}
 {% endblock %}

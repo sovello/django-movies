@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'movies',
+    'debug_toolbar',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -77,9 +78,13 @@ WSGI_APPLICATION = 'movieratings.wsgi.application'
 
 DATABASES = {
     'default': {
+        #'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        #'NAME':'movies',
+        #'USER':'postgres',
+        #'HOST':'127.0.0.1',
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'NAME': 'db.sqlite3'
+    },
 }
 
 
@@ -102,11 +107,11 @@ USE_TZ = True
 STATICFILES_DIRS = ( os.path.join(BASE_DIR, "static"), )
     
 STATIC_URL = '/static/'
-LOGIN_REDIRECT_URL = '/movies'
+LOGIN_REDIRECT_URL = '/movies/home'
 LOGIN_URL = '/login/'
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'sovellohpmgani@gmail.com'
-EMAIL_HOST_PASSWORD = ',.;Sovello1984'
+EMAIL_HOST = 'smtp.fugit.space'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 587

@@ -16,9 +16,11 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from movieratings.views import about
+import movies.views as views
+
 urlpatterns = [
     url('^', include('django.contrib.auth.urls')),
     url(r'^movies/', include('movies.urls')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^about/$', about, name='about'),
+    url(r'^movies/about/$', about, name='about'),
 ]

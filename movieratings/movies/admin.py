@@ -27,6 +27,9 @@ class RaterAdmin(admin.ModelAdmin):
 class GenreAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'total_movies')
 
+class RatingsAdmin(admin.ModelAdmin):
+    list_display = ['movie', 'rating']
+    list_filter = ['movie__genre']
 
 class OccupationAdmin(admin.ModelAdmin):
     list_display = ('__str__') #, 'admin_order_field = -name')
@@ -35,6 +38,6 @@ class OccupationAdmin(admin.ModelAdmin):
 admin.site.register(Occupation)
 admin.site.register(Gender)
 admin.site.register(Genre, GenreAdmin)
-admin.site.register(Ratings)
+admin.site.register(Ratings, RatingsAdmin)
 admin.site.register(Movie, MovieAdmin) # add this for the change to take effect
 admin.site.register(Rater, RaterAdmin)

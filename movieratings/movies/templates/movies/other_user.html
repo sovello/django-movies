@@ -12,13 +12,13 @@
 	</table>
     <table class="table">
       <tr>
-	<th>Movies You Have Rated</th><th>&nbsp;&nbsp;</th><th>Top 20 Movies we recommend for you to watch and Rate</th>
+	<th>Rating History for User # {{ user.number }} </th><th>&nbsp;&nbsp;</th><th>Recommend these movies to User {{ user.number }}</th>
       </tr>
       <tr>
 	<td valign="top">
 	  <ol>
 	    {% for rate in ratings %}
-	    <li><a href="{% url 'movie' rate.movie_id %}">{{ rate.movie }}</a> : {{ rate.rating }}<span> <a  style="float:right" class="btn btn-xs btn-default"  role="button" href="{% url 'editrating' rate.id %}">Edit Your Rating</a></span><hr /></li>
+	    <li><a href="{% url 'movie' rate.movie_id %}">{{ rate.movie }}</a> : {{ rate.rating }}<hr /></li>
 	    {% endfor %}			      
 	  </ol>
 		<div class="pagination">
@@ -41,8 +41,15 @@
 	<td valign="top">
 	  <ol>
 	    {% for movie in notwatched %}
-	    <li><a href="{% url 'movie' movie.movie_id %}">{{ movie.title }}</a> : <span><a style="float:right" class="btn btn-xs btn-default"  role="button"  href="{% url 'rate' movie.movie_id %}">Rate</a><hr /></li>
-	    {% endfor %}
+	      <li><a href="{% url 'movie' movie.movie_id %}">{{ movie.title }}</a> :
+			  <span>
+				  {% if movie.movie_id not in currUserMovies %}
+				  <a style="float:right" class="btn btn-xs btn-default"
+						role="button"
+					  href="{% url 'rate' movie.movie_id %}">Rate</a></span>
+			  {% endif %}
+			  <hr /></li>
+	      {% endfor %}
 	  </ol>
 	</td>
       </tr>

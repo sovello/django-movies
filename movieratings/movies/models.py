@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Occupation(models.Model):
-    occupation_id = models.CharField(primary_key=True, max_length=100, default=1)
+    occupation_id = models.IntegerField(primary_key=True, max_length=100, default=1)
     name = models.CharField(max_length = 140)
 
     def __str__(self):
