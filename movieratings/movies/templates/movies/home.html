@@ -2,104 +2,104 @@
 {% block extrahead %}
 {% load static %}
 <script src="{% static 'chartjs/Chart.min.js' %}" type="text/javascript" charset='utf-8'></script>
+<script src="{% static 'js/hicharts/js/highcharts.js' %}"></script>
+<script src="{% static 'js/hicharts/js/modules/exporting.js' %}"></script>
+<script type="text/javascript">
+
+</script>
+
 {% endblock %}
 {% block content %}
-		
-	<div style="margin-left:50; width:50%">	
-		<h3>Average Rating per Gender</h3>
-		<ul> <span style="color:#B5593A">
-			<li>Overall</li></span>
-			<span style="color:#000000"><li>Women Average Rating </li></span>
-			<span style="color:#8BE827"><li>Male Average Rating</li></span>
-		</ul>
-		<canvas id="avgrate" height="300" width="300"></canvas>
-		<h3>Movie Counts per Genre</h3>
-		<canvas id="canvas" height="450" width="600"></canvas>
 
-		<canvas id="combar" height="450" width="600"></canvas>
-	</div>
+
+<div id="chartcontainer" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="moviecounts" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 		<script>
-		
-	var barChartData = {
-		labels : ["unknown","Action","Adventure","Animation","Children\'s","Comedy","Crime","Documentary","Drama","Fantasy","Film-Noir","Horror","Musical","Mystery","Romance","Sci-Fi","Thriller","War","Western"],
-		//labels : {{ genres }},
-		
-		datasets : [
-			{
-				fillColor : "rgba(220,220,220,0.5)",
-				strokeColor : "rgba(220,220,220,0.8)",
-				highlightFill: "rgba(220,220,220,0.75)",
-				highlightStroke: "rgba(220,220,220,1)",
-				data : {{ moviecounts }}
-			},
-		]
-		};
 
-		var pieChartData = {
-			labels : ["unknown","Action","Adventure","Animation","Children\'s","Comedy","Crime","Documentary","Drama","Fantasy","Film-Noir","Horror","Musical","Mystery","Romance","Sci-Fi","Thriller","War","Western"],
-			datasets :[
-				{
-					label : "Overall Average Rating",
-					fillColor : "rgba(181,89,58,0.5)",
-					strokeColor : "rgba(181,89,58,0.8)",
-					pointColor : "rgba(181,89,58,0.75)",
-					pointStrokeColor : '#fff',
-					pointHighlightFill : '#fff',
-					pointHighlightStroke : "rgba(181,89,58,1)",
-					data : {{ avgrating }}
-				},
-			
-				{
-					label: "Men Average Rating",
-					fillColor : "rgba(196,165,155,0.5)",
-					strokeColor : "rgba(222,176,38,0.8)",
-					pointColor : "rgba(139,232,39,0.8)",
-					pointStrokeColor : '#fff',
-					pointHighlightFill : '#fff',
-					highlightFill : "rgba(222,176,38,0.75)",
-					pointHighlightStroke : "rgba(222,176,38,1)",
-					data : {{ malerating }}
-				},
-				{
-					label : "Women Average Rating",
-					fillColor : "rgba(0,0,0,0.5)",
-					strokeColor : "rgba(230,150,73,0.8)",
-					pointColor : "rgba(0,0,0,0.8)",
-					pointStrokeColor : '#fff',
-					pointHighlightFill : '#fff',
-					highlightFill : "rgba(230,150,73,0.75)",
-					pointHighlightStroke : "rgba(230,150,73,1)",
-					data : {{ femalerating }}
-				},
-			],
-		
-		};
-		var options = {
-			legendTemplate : '<ul>'
-			    +'<% for (var i=0; i<datasets.length; i++) { %>'
-			    +'<li>'
-			    +'<span style=\"background-color:<%=datasets[i].lineColor%>\"></span>'
-			    +'<% if (datasets[i].label) { %><%= datasets[i].label %><% } %>'
-			    +'</li>'
-			    +'<% } %>'
-			    +'</ul>',
-			responsive : true,
-			  }
-		
-	window.onload = function(){
-		var pie = document.getElementById("avgrate").getContext("2d");
-		var ctx = document.getElementById("canvas").getContext("2d");
-		var bar = document.getElementById("combar").getContext("2d");
-		window.myBar = new Chart(ctx).Bar(barChartData, {
-			responsive : true
-		});
-		window.myPie = new Chart(pie).Line(pieChartData,options);
-		var legend = window.myPie.generateLegend();
-		$('#chart').append(legend);
-		window.myPie = new Chart(bar).Bar(pieChartData, {
-			responsive : true,
-			scaleGridLineWidth : 5,
-		});
-	}
+$(function () {
+    $('#chartcontainer').highcharts({
+        title: {
+            text: "Average Movie Ratings by Gender as compared with Overall Average Rating",
+            x: -20 //center
+        },
+        subtitle: {
+            text: 'Source: MovieLens',
+            x: -20
+        },
+        xAxis: {
+            categories: ["unknown","Action","Adventure","Animation","Children\'s","Comedy","Crime","Documentary","Drama","Fantasy","Film-Noir","Horror","Musical","Mystery","Romance","Sci-Fi","Thriller","War","Western"]
+        },
+        yAxis: {
+            title: {
+                text: 'Average Rating /5'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: '' //this adds to the label like for the measurement
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: [{
+            name: 'Overall Average',
+            data: {{ avgrating }}
+        }, {
+            name: 'Men',
+            data: {{ malerating }}
+        },
+			{
+            name: 'Women',
+            data: {{ femalerating }}
+        }]
+    });
+});
+
+$(function () {
+    $('#moviecounts').highcharts({
+        title: {
+            text: "Movie Counts per Genre",
+            x: -20 //center
+        },
+        subtitle: {
+            text: 'Source: MovieLens',
+            x: -20
+        },
+        xAxis: {
+            categories: ["unknown","Action","Adventure","Animation","Children\'s","Comedy","Crime","Documentary","Drama","Fantasy","Film-Noir","Horror","Musical","Mystery","Romance","Sci-Fi","Thriller","War","Western"]
+        },
+        yAxis: {
+            title: {
+                text: 'Frequency'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: 'Movies'
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: [{
+			type:"column",
+			name:"Total Movies",
+			data: {{ moviecounts }}
+		}]
+    });
+});
 	</script>
 {% endblock %}

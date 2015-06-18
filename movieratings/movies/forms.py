@@ -1,12 +1,12 @@
 from django import forms
-from movies.models import Rater, Ratings
+from movies.models import Rater, Ratings, Occupation
 from django.contrib.auth.models import User
 
 
 class RaterForm(forms.ModelForm):
     class Meta:
         model = Rater
-        fields = ('gender', 'occupation', 'age', 'zip_code')
+        fields = ('gender', 'occupation', 'age', 'zip_code', 'photo')
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
@@ -18,7 +18,11 @@ class UserForm(forms.ModelForm):
 class UserEditForm(forms.ModelForm):
     class Meta:
         model = Rater
-        fields = ('occupation', 'age', 'zip_code')
+        fields = ('age', 'occupation', 'zip_code', 'photo')
+        widgets = {
+'photo' : forms.ClearableFileInput(attrs={'accept': 'image/*', 'name':'image'}),
+            }
+    #fields = ('occupation', 'age', 'zip_code', 'photo')
 
 class RatingForm(forms.ModelForm):
     class Meta:

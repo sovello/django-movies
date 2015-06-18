@@ -1,17 +1,70 @@
 {% extends 'base.html' %}
 {% block content %}
-<h4>Rater Demographics</h4>
 {% if user %}
-<table>
-	<tr>
-		<td>
-			<h5>Rater ID #: <em>{{ user.number }}</em></h5>
-			<p>Age: <em>{{ user.age }}</em></p>
-			<p>Total Movies Rated: <em>{{user.rated_movies}}</em></p>
-	</tr>
-	</table>
+<div class="row">
+	<div class="col-md-3">
+		<h4>Rater Demographics</h4>
+		<h5>Rater ID #: <em>{{ user.number }}</em></h5>
+		<p>Age: <em>{{ user.age }}</em></p>
+		<p>Total Movies Rated: <em>{{user.rated_movies}}</em></p>
+	</div>
+	<div class="col-md-3">
+<img height="140" width="140" src="{{ user.photo.url }}" alt="Sovello's" class="img-circle">		
+	</div>
+	
+	<div class="col-md-3">      
+		<canvas id="canvas" width="160" height="120"></canvas>
+	</div>
+	<div class="col-md-3">
+<video id="video" width="160" height="120" autoplay></video>
+<button onclick="takeSnap()" id="snap">Snap Photo</button>
+<script type="text/javascript" language="javascript">
+	// Grab elements, create settings, etc.
+		var canvas = document.querySelector('canvas'); //canvas tag
+		var	context = canvas.getContext('2d'); //what is contained in the canvas
+		var	video = document.querySelector('video'); // video tag
+		var	videoObj = { "video": true }; //yes, we only want video, audio: true for audio
+		var	errBack = function(error) { //what to return if we fail
+				console.log("Video capture error: ", error.code);
+			},
+			localMediaStream = null; //all the info about the camera object
+
+navigator.getUserMedia = navigator.GetUserMedia ||
+						 navigator.webkitGetUserMedia ||
+						 navigator.mozGetUserMedia ||
+						 navigarot.msGetUserMedia;
+
+function snapshot(){
+	if(localMediaStream){
+		//context = canvas.getContext('2d');
+		context.drawImage(video, 0, 0, 160, 120);
+		document.querySelector('img').src = canvas.toDataURL('image/jpeg');
+		//canvas.toDataURL('image/png') gives a base64encoded image string.
+	}
+}
+btn = document.getElementById('snap');
+
+btn.addEventListener('click', snapshot, false); //wait until we click then start camera
+var on_progress = '0';
+
+function takeSnap(){
+	if(on_progress == '0'){
+		navigator.getUserMedia(videoObj, function(stream){
+			video.src = window.URL.createObjectURL(stream);
+			localMediaStream = stream;
+			video.play();
+			on_progress = '1';
+		}, errBack);
+	}
+}
+
+</script>
+
+	</div>
+</div>
+
     <table class="table">
-      <tr>
+		<tr>
 	<th>Movies You Have Rated</th><th>&nbsp;&nbsp;</th><th>Top 20 Movies we recommend for you to watch and Rate</th>
       </tr>
       <tr>
@@ -48,49 +101,32 @@
       </tr>
     </table>
 {% endif %}
-{% endblock %}
 
-	{% comment %}
-				<td>
-				 <video id="video" width="640" height="480" autoplay></video>
-				<button id="snap">Snap Photo</button>
-				<canvas id="canvas" width="640" height="480"></canvas>
-			<script type="text/javascript" language="javascript">
-			// Put event listeners into place
-			window.addEventListener("DOMContentLoaded", function() {
-				// Grab elements, create settings, etc.
-					var canvas = document.getElementById("canvas"),
-						context = canvas.getContext("2d"),
-						video = document.getElementById("video"),
-						videoObj = { "video": true },
-						errBack = function(error) {
-							console.log("Video capture error: ", error.code);
-						};
+	{% endblock %}
+<div class="row">
+	<div class="col-md-6">
+		<video autoplay></video>
+		<img src="">
+		<canvas style="display:none;"></canvas>
+		<script>
+			var video = document.querySelector('video');
+			var canvas = document.querySelector('canvas');
+			var ctx = canvas.getContext('2d');
+			var localMediaStream = null;
 
-				// Put video listeners into place
-				if(navigator.getUserMedia) { // Standard
-					navigator.getUserMedia(videoObj, function(stream) {
-						video.src = stream;
-						video.play();
-					}, errBack);
-				} else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
-					navigator.webkitGetUserMedia(videoObj, function(stream){
-						video.src = window.webkitURL.createObjectURL(stream);
-						video.play();
-					}, errBack);
-				}
-				else if(navigator.mozGetUserMedia) { // Firefox-prefixed
-					navigator.mozGetUserMedia(videoObj, function(stream){
-						video.src = window.URL.createObjectURL(stream);
-						video.play();
-					}, errBack);
-				}
-			}, false);
-			// Trigger photo take
-			document.getElementById("snap").addEventListener("click", function() {
-				context.drawImage(video, 0, 0, 640, 480);
-				});
-			</script>
-			
-		</td>
-{% endcomment %}
+			function snapshot(){
+			if(localMediaStream){
+			ctx.drawImage(video, 0, 0);
+			document.querySelector('img').src = canvas.toDataURL('image/webp');
+			}
+			}
+			video.addEventListener('click',snapshot,false);
+
+			navigator.getUserMedia({video:true}, function(stream){
+			video.src = window.URL.createObjectURL(stream);
+			localMediaStream = stream;
+			}, errorCallback);
+		</script>
+	</div>
+</div>
+

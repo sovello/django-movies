@@ -68,7 +68,7 @@ class Rater(models.Model):
     zip_code = models.CharField('Zip Code', max_length = 20)
     number = models.IntegerField('Rater Number', default=10000)
     user = models.OneToOneField(User, null=True)
-    
+    photo = models.ImageField(upload_to = 'profile_photos', null=True, blank=True)
     def __str__(self):
         return '{} (ID #:{})'.format(self.occupation, self.number)
     

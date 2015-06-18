@@ -51,8 +51,7 @@ def genres(request):
     return HttpResponse("<br />".join(all_genres))
 
 #@login_required
-def home(request):
-
+def home(request):    
     if not request.user.is_authenticated():
         return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     genres = [gn.name for gn in Genre.objects.all()]
@@ -66,7 +65,7 @@ def home(request):
     avg = [round(avgrating[i].avgrate,2) for i in range(len(avgrating))]
     return render(request, 'movies/home.html', {"genres":genres, "moviecounts":moviecounts, 'avgrating':avg, 'malerating':malerate, "femalerating":fmalerate})
 
-
+    
 def paginate(request, items_list, n_per_page, var):
     paginator = Paginator(items_list, n_per_page) # only show 30 movies
     page = request.GET.get(var) # page has to be set in the url
@@ -129,7 +128,7 @@ def userprofile(request, uid):
         userform = UserEditForm(instance=userdata)
         return render(request, 'movies/edit.html', {"thisuser":userform})
     elif request.method == 'POST':
-        rater_form = UserEditForm(request.POST, instance = userdata)
+        rater_form = UserEditForm(request.POST, request.FILES, instance = userdata)
         if rater_form.is_valid():         
             rater_form.save()
             return render(request, 'movies/index.html', {"message":"You successfully updated your profile"})
